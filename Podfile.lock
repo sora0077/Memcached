@@ -1,0 +1,25 @@
+PODS:
+  - libmemcached (0.1.0)
+  - Nimble (3.0.0)
+  - Quick (0.8.0)
+
+DEPENDENCIES:
+  - libmemcached (from `https://github.com/sora0077/libmemcached.git`)
+  - Nimble
+  - Quick
+
+EXTERNAL SOURCES:
+  libmemcached:
+    :git: https://github.com/sora0077/libmemcached.git
+
+CHECKOUT OPTIONS:
+  libmemcached:
+    :commit: 5a4ac868785e1cf9d11a35c102d4ad4be45c556d
+    :git: https://github.com/sora0077/libmemcached.git
+
+SPEC CHECKSUMS:
+  libmemcached: 6a431b4656b9dc5dab417987487d484618f78745
+  Nimble: 4c353d43735b38b545cbb4cb91504588eb5de926
+  Quick: 563d0f6ec5f72e394645adb377708639b7dd38ab
+
+COCOAPODS: 0.39.0
