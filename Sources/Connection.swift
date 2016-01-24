@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import libmemcached
+import CMemcached
 
 func throwIfError(mc: UnsafePointer<memcached_st>, _ rc: memcached_return_t) throws {
     

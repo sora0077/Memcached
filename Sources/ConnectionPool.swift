@@ -7,7 +7,8 @@
 //
 
 import Foundation
-import libmemcached
+import CMemcached
+import CMemcachedUtil
 
 final public class ConnectionPool {
     
@@ -35,8 +36,6 @@ final public class ConnectionPool {
     
     func detach() {
         
-        print("detached")
-        
         if let pool = _pool {
             memcached_pool_destroy(pool)
         }
@@ -44,7 +43,7 @@ final public class ConnectionPool {
     
     public func connection() throws -> Connection {
         
-        var rc: memcached_return = MEMCACHED_MAXIMUM_RETURN
+        var rc: memcached_return = CMemcached.MEMCACHED_MAXIMUM_RETURN
         let mc = memcached_pool_pop(_pool!, false, &rc)
         try throwIfError(mc, rc)
         let conn = Connection(memcached: mc, pool: self)

@@ -1,24 +1,24 @@
 PODS:
-  - libmemcached (0.1.1)
+  - CMemcached (0.2.0)
   - Nimble (3.0.0)
   - Quick (0.8.0)
 
 DEPENDENCIES:
-  - libmemcached (from `https://github.com/sora0077/libmemcached.git`)
+  - CMemcached (from `https://github.com/sora0077/libmemcached.git`)
   - Nimble
   - Quick
 
 EXTERNAL SOURCES:
-  libmemcached:
+  CMemcached:
     :git: https://github.com/sora0077/libmemcached.git
 
 CHECKOUT OPTIONS:
-  libmemcached:
-    :commit: febe295dd512a26eab13ac64a7e05397a34eb3c8
+  CMemcached:
+    :commit: 80bd3e42df09173af1a4bbf15c41af250ed7e20c
     :git: https://github.com/sora0077/libmemcached.git
 
 SPEC CHECKSUMS:
-  libmemcached: 980930d382572607c5ca794747f3e8581bff0824
+  CMemcached: 9cd0825e03e6655ad9c00eddc906cdb1b255c1a3
   Nimble: 4c353d43735b38b545cbb4cb91504588eb5de926
   Quick: 563d0f6ec5f72e394645adb377708639b7dd38ab
 
