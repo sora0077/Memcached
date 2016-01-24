@@ -1,0 +1,9 @@
+source 'https://github.com/CocoaPods/Specs.git'
+source 'https://github.com/sora0077/PodSpecs.git'
+
+use_frameworks!
+platform :osx, '10.10'
+
+target 'Demo' do
+    pod 'Memcached', :path => '../../'
+end

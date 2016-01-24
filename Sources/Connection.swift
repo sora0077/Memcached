@@ -12,7 +12,10 @@ import libmemcached
 func throwIfError(mc: UnsafePointer<memcached_st>, _ rc: memcached_return_t) throws {
     
     if rc != MEMCACHED_SUCCESS {
-        throw Connection.Error.ConnectionError(String.fromCString(memcached_strerror(mc, rc)) ?? "")
+        throw Connection.Error.ConnectionError(
+            String.fromCString(memcached_strerror(mc, rc)) ??
+                String.fromCString(memcached_last_error_message(mc)) ?? ""
+        )
     }
 }
 
@@ -62,6 +65,9 @@ final public class Connection {
         let rc = memcached_version(_mc)
         return rc == MEMCACHED_SUCCESS
     }
+}
+
+extension Connection {
     
     public func stringForKey(key: String) throws -> String? {
         
@@ -112,10 +118,12 @@ final public class Connection {
         }
         return nil
     }
+}
+
+extension Connection {
     
     public func set(value: String, forKey key: String, expire: Int = 0) throws {
         
-        print(value, key)
         try set(Value.String(value), forKey: key, expire: expire)
     }
     
@@ -137,15 +145,52 @@ final public class Connection {
         try throwIfError(_mc, rc)
     }
     
+}
+
+extension Connection {
+
     public func remove(forKey key: String, expire: Int = 0) throws {
         
         let rc = memcached_delete(_mc, key, key.utf8.count, expire)
         try throwIfError(_mc, rc)
     }
     
+    public func remove<Sequence: SequenceType where Sequence.Generator.Element == String>(forKeys keys: Sequence, expire: Int = 0) throws {
+        
+        for key in Set(keys) {
+            try remove(forKey: key, expire: expire)
+        }
+    }
+    
+    public func remove(forKeys keys: String..., expire: Int = 0) throws {
+        
+        try remove(forKeys: keys)
+    }
+    
     public func flush(expire: Int = 0) throws {
         
         let rc = memcached_flush(_mc, expire)
         try throwIfError(_mc, rc)
+    }
+}
+
+extension Connection {
+    
+    public func increment(forKey key: String, incr: UInt64 = 1, initial: UInt64 = 1, expire: Int = 0) throws -> UInt64 {
+        
+        var value: UInt64 = 0
+        let rc = memcached_increment_with_initial(_mc, key, key.utf8.count, incr, initial, expire, &value)
+        try throwIfError(_mc, rc)
+        
+        return value
+    }
+    
+    public func decrement(forKey key: String, decr: UInt64 = 1, initial: UInt64 = 0, expire: Int = 0) throws -> UInt64 {
+        
+        var value: UInt64 = 0
+        let rc = memcached_decrement_with_initial(_mc, key, key.utf8.count, decr, initial, expire, &value)
+        try throwIfError(_mc, rc)
+        
+        return value
     }
 }

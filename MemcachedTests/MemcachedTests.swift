@@ -12,19 +12,16 @@ import Nimble
 @testable import Memcached
 
 
-struct Options: ServerConnectionOption {
-    
-    var host: String = "localhost"
-}
-
-
 class MemcachedTests: QuickSpec {
     
     var conn: Connection!
     
     override func spec() {
         beforeEach {
-            let pool = ConnectionPool(options: Options())
+            let pool = ConnectionPool(options:
+                "--SERVER=127.0.0.1",
+                "--BINARY-PROTOCOL"
+            )
             self.conn = try! pool.connection()
             try! self.conn.flush()
         }
@@ -67,6 +64,34 @@ class MemcachedTests: QuickSpec {
                         expect(try self.conn.stringForKey("key")).to(beNil())
                     } catch {
                         XCTFail()
+                    }
+                }
+            }
+            
+            context("increment") {
+                it("can be increment by one") {
+                    do {
+                        let val1 = try self.conn.increment(forKey: "key")
+                        expect(val1).to(equal(1))
+                        
+                        let val2 = try self.conn.increment(forKey: "key")
+                        expect(val2).to(equal(2))
+                    } catch {
+                        XCTFail("\(error)")
+                    }
+                }
+            }
+            
+            context("decrement") {
+                it("will be 0, value is not set or underflow") {
+                    do {
+                        let val = try self.conn.decrement(forKey: "key")
+                        expect(val).to(equal(0))
+                        
+                        let val2 = try self.conn.decrement(forKey: "key")
+                        expect(val2).to(equal(0))
+                    } catch {
+                        XCTFail("\(error)")
                     }
                 }
             }

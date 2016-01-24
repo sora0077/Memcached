@@ -20,7 +20,7 @@ public protocol ServerConnectionOption: ConnectionOption {
     var weight: Float? { get }
 }
 
-public struct ConnectionOptions: ConnectionOption {
+public struct ConnectionOptions: ConnectionOption, ArrayLiteralConvertible {
     
     let _options: [ConnectionOption]
     
@@ -32,6 +32,27 @@ public struct ConnectionOptions: ConnectionOption {
     
     public init(options: [ConnectionOption]) {
         _options = options
+    }
+    
+    public init(arrayLiteral elements: String...) {
+        self.init(options: elements.map { StringLiteralConnectionOption(stringLiteral: $0) })
+    }
+}
+
+public struct StringLiteralConnectionOption: ConnectionOption, StringLiteralConvertible {
+    
+    public let configuration: String
+    
+    public init(stringLiteral value: String) {
+        configuration = value
+    }
+    
+    public init(unicodeScalarLiteral value: String) {
+        self.init(stringLiteral: value)
+    }
+    
+    public init(extendedGraphemeClusterLiteral value: String) {
+        self.init(stringLiteral: value)
     }
 }
 

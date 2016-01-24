@@ -1,0 +1,17 @@
+PODS:
+  - libmemcached (0.1.1)
+  - Memcached (0.1.0):
+    - libmemcached
+
+DEPENDENCIES:
+  - Memcached (from `../../`)
+
+EXTERNAL SOURCES:
+  Memcached:
+    :path: ../../
+
+SPEC CHECKSUMS:
+  libmemcached: 4ff07b6e84ef0b5239eccf15b84ec04a668c9704
+  Memcached: b19638bea8acf10cb2b642b06d38c9a8b17c2e97
+
+COCOAPODS: 0.39.0

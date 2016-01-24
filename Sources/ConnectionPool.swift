@@ -21,6 +21,14 @@ final public class ConnectionPool {
         _pool = memcached_pool(options.configuration, options.configuration.utf8.count)
     }
     
+    public convenience init(options: [String]) {
+        self.init(options: ConnectionOptions(options: options.map { StringLiteralConnectionOption(stringLiteral: $0) }))
+    }
+    
+    public convenience init(options: String...) {
+        self.init(options: options)
+    }
+    
     deinit {
         detach()
     }
