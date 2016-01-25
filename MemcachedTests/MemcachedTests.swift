@@ -95,6 +95,81 @@ class MemcachedTests: QuickSpec {
                     }
                 }
             }
+            
+            context("increment and decrement") {
+                it("is used as below") {
+                    do {
+                        try self.conn.increment(forKey: "key")
+                        try self.conn.increment(forKey: "key")
+                        expect(try self.conn.increment(forKey: "key")).to(equal(3))
+                        
+                        try self.conn.decrement(forKey: "key")
+                        try self.conn.decrement(forKey: "key")
+                        expect(try self.conn.decrement(forKey: "key")).to(equal(0))
+                    } catch {
+                        XCTFail("\(error)")
+                    }
+                }
+            }
+            
+            context("add") {
+                it("can add the value, if value not set") {
+                    do {
+                        try self.conn.add("val", forKey: "key")
+                        
+                        let val = try self.conn.stringForKey("key")
+                        expect(val).to(equal("val"))
+                    } catch {
+                        XCTFail("\(error)")
+                    }
+                }
+                
+                it("has error, if value is already set") {
+                    do {
+                        try self.conn.set("", forKey: "key")
+                        try self.conn.add("val", forKey: "key")
+                    } catch let error as Connection.Error {
+                        switch error {
+                        case .ConnectionError(let str):
+                            expect(str).to(equal("CONNECTION DATA EXISTS"))
+                        default:
+                            XCTFail("\(error)")
+                        }
+                    } catch {
+                        XCTFail("\(error)")
+                    }
+                }
+            }
+            
+            context("replace") {
+                it("has error, if value not set") {
+                    do {
+                        try self.conn.replace("val", forKey: "key")
+                        XCTFail()
+                    } catch let error as Connection.Error {
+                        switch error {
+                        case .ConnectionError(let str):
+                            expect(str).to(equal("NOT FOUND"))
+                        default:
+                            XCTFail("\(error)")
+                        }
+                    } catch {
+                        XCTFail("\(error)")
+                    }
+                }
+                
+                it("replaces new value") {
+                    do {
+                        try self.conn.set("", forKey: "key")
+                        try self.conn.replace("val", forKey: "key")
+                        
+                        let val = try self.conn.stringForKey("key")
+                        expect(val).to(equal("val"))
+                    } catch {
+                        XCTFail("\(error)")
+                    }
+                }
+            }
         }
     }
 }

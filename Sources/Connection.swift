@@ -11,7 +11,7 @@ import CMemcached
 
 func throwIfError(mc: UnsafePointer<memcached_st>, _ rc: memcached_return_t) throws {
     
-    if rc != MEMCACHED_SUCCESS {
+    if !memcached_success(rc) {
         throw Connection.Error.ConnectionError(
             String.fromCString(memcached_strerror(mc, rc)) ??
                 String.fromCString(memcached_last_error_message(mc)) ?? ""
@@ -144,7 +144,58 @@ extension Connection {
         
         try throwIfError(_mc, rc)
     }
+}
+
+extension Connection {
     
+    public func add(value: String, forKey key: String, expire: Int = 0) throws {
+        
+        try add(Value.String(value), forKey: key, expire: expire)
+    }
+    
+    public func add(value: NSData, forKey key: String, expire: Int = 0) throws {
+        
+        try add(Value.Data(value), forKey: key, expire: expire)
+    }
+    
+    private func add(value: Value, forKey key: String, expire: Int = 0) throws {
+        
+        var rc: memcached_return = MEMCACHED_MAXIMUM_RETURN
+        switch value {
+        case .String(let str):
+            rc = memcached_add(_mc, key, key.utf8.count, str, str.utf8.count, expire, value.flags)
+        case .Data(let data):
+            rc = memcached_add(_mc, key, key.utf8.count, UnsafePointer(data.bytes), data.length, expire, value.flags)
+        }
+        
+        try throwIfError(_mc, rc)
+    }
+}
+
+extension Connection {
+    
+    public func replace(value: String, forKey key: String, expire: Int = 0) throws {
+        
+        try replace(Value.String(value), forKey: key, expire: expire)
+    }
+    
+    public func replace(value: NSData, forKey key: String, expire: Int = 0) throws {
+        
+        try replace(Value.Data(value), forKey: key, expire: expire)
+    }
+    
+    private func replace(value: Value, forKey key: String, expire: Int = 0) throws {
+        
+        var rc: memcached_return = MEMCACHED_MAXIMUM_RETURN
+        switch value {
+        case .String(let str):
+            rc = memcached_replace(_mc, key, key.utf8.count, str, str.utf8.count, expire, value.flags)
+        case .Data(let data):
+            rc = memcached_replace(_mc, key, key.utf8.count, UnsafePointer(data.bytes), data.length, expire, value.flags)
+        }
+        
+        try throwIfError(_mc, rc)
+    }
 }
 
 extension Connection {
